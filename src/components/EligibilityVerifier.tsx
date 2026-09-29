@@ -31,6 +31,12 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
     '0x7c94b2e811094dfa62a941e770b135ad0192e4587c6312a0f8b91c2d3e4f5a6b'
   );
 
+  const generateRandomHex32 = () => {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    return '0x' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   const isProcessing = proof.status === 'generating' || proof.status === 'signing' || proof.status === 'submitting';
 
   const zkSteps = [
@@ -228,25 +234,47 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
                 </div>
 
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block flex items-center gap-1">
-                    <Key className="w-3 h-3 text-indigo-400" /> Citizen Identity Secret Key (Bytes&lt;32&gt; private witness)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs text-slate-400 flex items-center gap-1">
+                      <Key className="w-3 h-3 text-indigo-400" /> Citizen Identity Secret Key (Bytes&lt;32&gt; private witness)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setCitizenSecretKey(generateRandomHex32())}
+                      className="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition-colors"
+                      title="Generate random 32-byte secret key"
+                    >
+                      🎲 Randomize
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={citizenSecretKey}
                     onChange={(e) => setCitizenSecretKey(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-blue-500"
+                    placeholder="0x..."
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 mb-1 block flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-indigo-400" /> Issuer Document Hash (Aadhaar / Certificate SHA-256)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs text-slate-400 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-indigo-400" /> Issuer Document Hash (Aadhaar / Certificate SHA-256)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setCredentialDocHash(generateRandomHex32())}
+                      className="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition-colors"
+                      title="Generate random document SHA-256 hash"
+                    >
+                      🎲 Randomize
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={credentialDocHash}
                     onChange={(e) => setCredentialDocHash(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-blue-500"
+                    placeholder="0x..."
                   />
                 </div>
               </div>
@@ -504,7 +532,16 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
 
           <div className="max-w-xl mx-auto bg-slate-950/60 p-6 rounded-3xl border border-slate-800 space-y-4">
             <div>
-              <label className="text-xs font-medium text-slate-300 block mb-1">Citizen Identity Secret Key</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-medium text-slate-300">Citizen Identity Secret Key</label>
+                <button
+                  type="button"
+                  onClick={() => setCitizenSecretKey(generateRandomHex32())}
+                  className="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition-colors"
+                >
+                  🎲 Randomize
+                </button>
+              </div>
               <input
                 type="text"
                 value={citizenSecretKey}
@@ -513,7 +550,16 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-300 block mb-1">Issuer Document Hash</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-medium text-slate-300">Issuer Document Hash</label>
+                <button
+                  type="button"
+                  onClick={() => setCredentialDocHash(generateRandomHex32())}
+                  className="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 hover:border-cyan-500/40 transition-colors"
+                >
+                  🎲 Randomize
+                </button>
+              </div>
               <input
                 type="text"
                 value={credentialDocHash}
