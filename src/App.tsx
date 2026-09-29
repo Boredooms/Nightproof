@@ -2,13 +2,14 @@ import React from 'react';
 import { Layout } from './components/Layout';
 import { EligibilityVerifier } from './components/EligibilityVerifier';
 import { useMidnight } from './hooks/useMidnight';
-import { ShieldCheck, Lock, Sparkles, FileCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export function App() {
   const {
     wallet,
     connectWallet,
     disconnectWallet,
+    signCredentialPayload,
     metrics,
     incrementMetrics,
     incrementCitizensCount,
@@ -44,6 +45,8 @@ export function App() {
       {/* Main Core Component */}
       <EligibilityVerifier
         isConnected={wallet.isConnected}
+        onConnectWallet={connectWallet}
+        signPayload={signCredentialPayload}
         onProofGenerated={(isEligible) => incrementMetrics(isEligible)}
         onCredentialRegistered={incrementCitizensCount}
       />

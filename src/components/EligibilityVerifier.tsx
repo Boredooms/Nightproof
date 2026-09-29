@@ -12,6 +12,9 @@ import {
   UserCheck,
   Sparkles,
   RefreshCw,
+  Key,
+  Wallet,
+  AlertTriangle
 } from 'lucide-react';
 import { PRESET_SCHEMES, SchemeRequirement, ProofGenerationResult, generateAndSubmitProof } from '../utils/contract';
 
@@ -19,12 +22,16 @@ interface EligibilityVerifierProps {
   onProofGenerated: (isEligible: boolean) => void;
   onCredentialRegistered: () => void;
   isConnected: boolean;
+  onConnectWallet: () => void;
+  signPayload: (payload: string) => Promise<{ signature: string; publicKey: string }>;
 }
 
 export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
   onProofGenerated,
   onCredentialRegistered,
   isConnected,
+  onConnectWallet,
+  signPayload,
 }) => {
   const [activeTab, setActiveTab] = useState<'citizen' | 'verifier' | 'vault'>('citizen');
   const [selectedScheme, setSelectedScheme] = useState<SchemeRequirement>(PRESET_SCHEMES[0]);
@@ -39,6 +46,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
   // Execution state
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const [walletSig, setWalletSig] = useState<{ signature: string; publicKey: string } | null>(null);
   const [result, setResult] = useState<ProofGenerationResult | null>(null);
 
   // Vault Registration state
@@ -46,27 +54,42 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
   const [registrationTx, setRegistrationTx] = useState<string | null>(null);
 
   const steps = [
-    { name: 'Constructing Private Witness', desc: 'Inputs stay in local sandbox memory' },
+    { name: 'Requesting Midnight Lace Wallet Signature', desc: 'Authorizing ZK proof payload' },
+    { name: 'Constructing Private Witness Off-Chain', desc: 'Inputs stay strictly in browser sandbox' },
     { name: 'Evaluating ZK Circuit Assertions', desc: 'Validating inequalities in zero-knowledge' },
     { name: 'Generating zk-SNARK Cryptographic Proof', desc: 'Midnight Proof Server client compilation' },
-    { name: 'Submitting Disclosed Outcome to Ledger', desc: 'Verifying on Midnight Network' },
+    { name: 'Submitting Disclosed Outcome to Preprod', desc: 'Verifying on Midnight Network' },
   ];
 
   const handleGenerateProof = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isConnected) {
+      onConnectWallet();
+      return;
+    }
+
     setIsProcessing(true);
     setCurrentStep(0);
+    setWalletSig(null);
     setResult(null);
 
-    const stepInterval = setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev < steps.length - 1) return prev + 1;
-        clearInterval(stepInterval);
-        return prev;
-      });
-    }, 600);
-
     try {
+      // Step 1: Request signature from Midnight Lace Wallet
+      const payloadToSign = `NightProof_VerifyEligibility:${selectedScheme.id}:${annualIncome}:${age}:${academicScore}:${credentialDocHash}`;
+      const sigResult = await signPayload(payloadToSign);
+      setWalletSig(sigResult);
+      setCurrentStep(1);
+
+      // Step 2-5: Execute ZK circuit and submit proof
+      const stepInterval = setInterval(() => {
+        setCurrentStep((prev) => {
+          if (prev < steps.length - 1) return prev + 1;
+          clearInterval(stepInterval);
+          return prev;
+        });
+      }, 700);
+
       const res = await generateAndSubmitProof(
         {
           citizenSecretKey,
@@ -79,7 +102,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
       );
 
       clearInterval(stepInterval);
-      setCurrentStep(3);
+      setCurrentStep(4);
       setResult(res);
       onProofGenerated(res.isEligible);
     } catch (err) {
@@ -90,6 +113,11 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
   };
 
   const handleRegisterCredential = async () => {
+    if (!isConnected) {
+      onConnectWallet();
+      return;
+    }
+
     setIsRegistering(true);
     setRegistrationTx(null);
     await new Promise((r) => setTimeout(r, 1200));
@@ -101,6 +129,33 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
+      {/* Wallet Authorization Banner if Not Connected */}
+      {!isConnected && (
+        <div className="bg-gradient-to-r from-blue-950/80 via-indigo-950/80 to-slate-900/90 border border-blue-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400 flex items-center justify-center text-blue-400 flex-shrink-0">
+              <Wallet className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-white flex items-center gap-2">
+                <span>Midnight Lace Wallet Required</span>
+                <span className="text-xs font-normal px-2 py-0.5 rounded bg-blue-900 text-blue-300 font-mono">Preprod Testnet</span>
+              </h4>
+              <p className="text-xs text-slate-300 mt-1">
+                Authorize your Midnight wallet to generate zero-knowledge eligibility proofs and sign credential transactions.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onConnectWallet}
+            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold text-sm transition-all duration-300 shadow-xl shadow-blue-500/25 whitespace-nowrap active:scale-95"
+          >
+            Authorize & Connect Lace Wallet
+          </button>
+        </div>
+      )}
+
       {/* Navigation Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-2 rounded-2xl backdrop-blur-xl">
         <div className="flex items-center gap-2">
@@ -313,7 +368,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5 text-cyan-300" />
-                    <span>Generate & Submit ZK Proof</span>
+                    <span>Generate & Submit ZK Proof via Lace</span>
                   </>
                 )}
               </button>
@@ -373,6 +428,16 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   );
                 })}
               </div>
+
+              {walletSig && (
+                <div className="mt-4 p-3 bg-indigo-950/40 border border-indigo-800/60 rounded-xl text-xs space-y-1 font-mono text-indigo-300">
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-200">
+                    <Key className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Lace Cryptographic Signature:</span>
+                  </div>
+                  <div className="text-[11px] truncate text-cyan-300">{walletSig.signature}</div>
+                </div>
+              )}
             </div>
 
             {/* Proof Result Display Card */}
