@@ -114,28 +114,21 @@ export function useMidnight() {
       const { connectedApi, address, networkId, balance } = await connectLaceWallet()
       connectedApiRef.current = connectedApi
 
-      // Warn if the wallet is not on Preprod, but still allow connection
-      const isOnPreprod = networkId === 'preprod' || networkId === CONTRACT_CONFIG.network
-      const networkWarning = !isOnPreprod
-        ? `Wallet is on "${networkId}" network. Switch your Lace wallet to Preprod for full NightProof functionality.`
-        : null
-
+      // Connected on Preview — all good
       setWallet({
         status: 'connected',
-        address: address || 'mn_preprod_connected',
+        address: address || 'mn_preview_connected',
         networkId,
         balance,
-        error: networkWarning,   // show network mismatch as a warning (not blocking)
+        error: null,
       })
     } catch (err: any) {
       const raw = err?.message || ''
       let message: string
-      if (raw.toLowerCase().includes('invalid network') || raw.toLowerCase().includes('invalid network id')) {
-        message = 'Invalid Network: your Lace wallet network is not compatible. Open Lace → Settings → Network → select "Preprod", then reconnect.'
-      } else if (raw.toLowerCase().includes('network') && raw.toLowerCase().includes('mismatch')) {
-        message = 'Network mismatch: your Lace wallet is not set to Preprod. Open Lace → Settings → Network → switch to Preprod, then try again.'
+      if (raw.toLowerCase().includes('network') || raw.toLowerCase().includes('invalid')) {
+        message = 'Network error: ensure your Lace wallet is set to the Preview network, then try again.'
       } else if (raw.toLowerCase().includes('user declined') || raw.toLowerCase().includes('reject')) {
-        message = 'Authorization declined in Lace wallet. Please try again and approve.'
+        message = 'Authorization declined. Please try again and approve in your Lace wallet.'
       } else if (raw.toLowerCase().includes('not found') || raw.toLowerCase().includes('not installed')) {
         message = 'Midnight Lace Wallet not found. Install it from midnight.network/lace.'
       } else {

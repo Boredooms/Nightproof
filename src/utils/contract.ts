@@ -11,32 +11,28 @@
 // ─── Contract Configuration ────────────────────────────────────────────────
 
 export const CONTRACT_CONFIG = {
-  /**
-   * Allowed Midnight networks — the wallet can be on any of these.
-   * 'preprod' is the primary target for NightProof.
-   */
-  network: 'preprod' as const,
-  allowedNetworks: ['preprod', 'testnet-02', 'testnet', 'undeployed'] as const,
+  /** Midnight Preview network */
+  network: 'preview' as const,
 
   /**
-   * NightProof contract address deployed on Midnight Preprod.
+   * NightProof contract address deployed on Midnight Preview.
    * Set VITE_CONTRACT_ADDRESS in .env after running: npm run deploy
    */
   address:
     import.meta.env.VITE_CONTRACT_ADDRESS ||
     '[DEPLOY CONTRACT FIRST — paste address here]',
 
-  /** Midnight Preprod indexer GraphQL URL */
-  indexerUrl: 'https://indexer.preprod.midnight.network/api/v4/graphql',
+  /** Midnight Preview indexer GraphQL URL */
+  indexerUrl: 'https://indexer.preview.midnight.network/api/v4/graphql',
 
-  /** Midnight Preprod block explorer URL */
-  explorerUrl: 'https://explorer.preprod.midnight.network',
+  /** Midnight Preview block explorer URL */
+  explorerUrl: 'https://explorer.preview.midnight.network',
 
   /** Local ZK Proof Server (Docker) */
   proofServerUrl: 'http://localhost:6300',
 
-  /** Midnight Preprod RPC node */
-  nodeUrl: 'https://rpc.preprod.midnight.network',
+  /** Midnight Preview RPC node */
+  nodeUrl: 'https://rpc.preview.midnight.network',
 } as const
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -146,77 +142,27 @@ export async function connectLaceWallet(): Promise<{
     )
   }
 
-  // ── Known valid Midnight network IDs ──────────────────────────────────────
-  const NETWORK_ID_CANDIDATES = [
-    'preprod',
-    'midnight_preprod',
-    'testnet-02',
-    'midnight_testnet',
-    'undeployed',
-  ]
+  // Connect using Midnight Preview network ID
+  const NETWORK_ID = 'preview'
 
   let connectedApi: any = null
-  let usedNetworkId: string = 'preprod'
+  let usedNetworkId: string = NETWORK_ID
 
   // Safely get function references
   const connectFn = typeof lace.connect === 'function' ? lace.connect.bind(lace) : null
   const enableFn = typeof lace.enable === 'function' ? lace.enable.bind(lace) : null
 
-  // 1. If lace is already an authorized API object (has .state or address methods)
+  // If lace object already IS the connected API (has state/sign methods)
   if (lace.state || lace.getUnshieldedAddress || lace.getShieldedAddresses || lace.signData) {
     connectedApi = lace
   } else {
-    // 2. Try connectFn or enableFn safely
     const primaryFn = connectFn || enableFn
     if (!primaryFn) {
-      throw new Error('Midnight Lace Wallet API does not provide a valid connect or enable method.')
+      throw new Error('Midnight Lace Wallet API does not expose a connect or enable method.')
     }
-
-    let lastErr: any = null
-
-    // Try network ID candidates
-    for (const netId of NETWORK_ID_CANDIDATES) {
-      try {
-        connectedApi = await primaryFn(netId)
-        usedNetworkId = netId
-        break
-      } catch (err: any) {
-        lastErr = err
-        const msg = String(err?.message || err || '')
-        if (msg.toLowerCase().includes('reject') || msg.toLowerCase().includes('declined')) {
-          throw err
-        }
-      }
-    }
-
-    // Try calling without arguments if candidate network IDs failed
-    if (!connectedApi) {
-      try {
-        connectedApi = await primaryFn()
-      } catch (err: any) {
-        if (!lastErr) lastErr = err
-      }
-    }
-
-    // Try secondary function if primary failed
-    if (!connectedApi && connectFn && enableFn) {
-      const secondaryFn = enableFn
-      for (const netId of NETWORK_ID_CANDIDATES) {
-        try {
-          connectedApi = await secondaryFn(netId)
-          usedNetworkId = netId
-          break
-        } catch { continue }
-      }
-      if (!connectedApi) {
-        try { connectedApi = await secondaryFn() } catch {}
-      }
-    }
-
-    if (!connectedApi) {
-      const errMsg = lastErr?.message || 'Could not connect to Midnight Lace Wallet.'
-      throw new Error(errMsg)
-    }
+    // Connect with 'preview'
+    connectedApi = await primaryFn(NETWORK_ID)
+    if (!connectedApi) throw new Error('Lace wallet returned no API after connecting to preview network.')
   }
 
   let address = ''

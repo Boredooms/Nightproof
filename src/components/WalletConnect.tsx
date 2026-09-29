@@ -27,54 +27,39 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
   const badge = STATUS_BADGES[wallet.status];
 
   if (wallet.status === 'connected') {
-    const isWrongNetwork = wallet.error && wallet.error.includes('network')
     return (
-      <div className="flex flex-col gap-1.5">
-        <div className="flex flex-wrap items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-2.5 backdrop-blur-md shadow-xl">
-          {/* Status indicator */}
-          <div className="flex items-center gap-2">
-            <span className={`w-2.5 h-2.5 rounded-full ${isWrongNetwork ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'} flex-shrink-0`} />
-            <CheckCircle2 className={`w-4 h-4 ${isWrongNetwork ? 'text-amber-400' : 'text-emerald-400'} flex-shrink-0`} />
-            <ShieldCheck className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-          </div>
-
-          {/* Address */}
-          <span className="font-mono text-xs text-slate-200 font-semibold">
-            {wallet.address ? truncate(wallet.address, 12, 6) : 'Connected'}
-          </span>
-
-          {/* Network badge — amber if wrong network */}
-          <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold border font-mono uppercase ${
-            isWrongNetwork
-              ? 'bg-amber-950 text-amber-300 border-amber-800/60'
-              : 'bg-indigo-950 text-indigo-300 border-indigo-800/60'
-          }`}>
-            {wallet.networkId || CONTRACT_CONFIG.network}
-          </span>
-
-          {/* Balance */}
-          {wallet.balance && (
-            <div className="flex items-center gap-1 bg-slate-950/80 px-2.5 py-0.5 rounded-md border border-slate-800 text-xs font-mono">
-              <span className="text-amber-400 font-bold">{wallet.balance}</span>
-            </div>
-          )}
-
-          {/* Disconnect */}
-          <button
-            onClick={onDisconnect}
-            className="ml-1 text-xs text-slate-400 hover:text-red-400 transition-colors duration-200 px-2 py-1 rounded hover:bg-red-950/30"
-          >
-            Disconnect
-          </button>
+      <div className="flex flex-wrap items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-2.5 backdrop-blur-md shadow-xl">
+        {/* Status indicator */}
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-cyan-400 flex-shrink-0" />
         </div>
 
-        {/* Network mismatch warning banner */}
-        {isWrongNetwork && (
-          <div className="flex items-start gap-2 bg-amber-950/60 border border-amber-800/50 rounded-xl px-3 py-2 text-xs text-amber-300">
-            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-            <span>{wallet.error}</span>
+        {/* Address */}
+        <span className="font-mono text-xs text-slate-200 font-semibold">
+          {wallet.address ? truncate(wallet.address, 12, 6) : 'Connected'}
+        </span>
+
+        {/* Network badge — always Preview */}
+        <span className="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-300 text-[11px] font-semibold border border-indigo-800/60 font-mono uppercase">
+          {wallet.networkId || 'preview'}
+        </span>
+
+        {/* Balance */}
+        {wallet.balance && (
+          <div className="flex items-center gap-1 bg-slate-950/80 px-2.5 py-0.5 rounded-md border border-slate-800 text-xs font-mono">
+            <span className="text-amber-400 font-bold">{wallet.balance}</span>
           </div>
         )}
+
+        {/* Disconnect */}
+        <button
+          onClick={onDisconnect}
+          className="ml-1 text-xs text-slate-400 hover:text-red-400 transition-colors duration-200 px-2 py-1 rounded hover:bg-red-950/30"
+        >
+          Disconnect
+        </button>
       </div>
     );
   }
