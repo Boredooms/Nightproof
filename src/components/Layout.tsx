@@ -19,26 +19,24 @@ export const Layout: React.FC<LayoutProps> = ({
   onDisconnectWallet,
 }) => {
   return (
-    <div className="min-h-screen bg-[#050a18] text-slate-100 flex flex-col selection:bg-cyan-500 selection:text-white">
+    <div className="min-h-screen bg-black text-zinc-100 flex flex-col selection:bg-zinc-200 selection:text-black">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#050a18]/80 backdrop-blur-xl border-b border-slate-800/80">
+      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-xl border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 shadow-lg shadow-blue-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-cyan-400" />
-              </div>
+            <div className="w-11 h-11 rounded-2xl bg-zinc-900 border border-zinc-700 p-0.5 shadow-xl flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
                   NightProof
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-blue-950 text-blue-400 border border-blue-800/60">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-zinc-900 text-zinc-300 border border-zinc-700">
                   Midnight
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">
+              <p className="text-xs text-zinc-400 hidden sm:block">
                 Privacy-First Eligibility Verification
               </p>
             </div>
@@ -53,23 +51,23 @@ export const Layout: React.FC<LayoutProps> = ({
       </header>
 
       {/* Metrics Bar */}
-      <div className="bg-slate-950/60 border-b border-slate-800/60 py-2.5">
+      <div className="bg-zinc-950 border-b border-zinc-800/80 py-2.5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-6">
             {[
-              { icon: <Activity className="w-4 h-4 text-emerald-400" />, label: 'Verified', value: metrics.totalVerifications },
-              { icon: <Lock className="w-4 h-4 text-blue-400" />, label: 'Evaluated', value: metrics.totalApplications },
-              { icon: <Award className="w-4 h-4 text-indigo-400" />, label: 'Registered', value: metrics.verifiedCitizensCount },
+              { icon: <Activity className="w-4 h-4 text-zinc-200" />, label: 'Verified', value: metrics.totalVerifications },
+              { icon: <Lock className="w-4 h-4 text-zinc-400" />, label: 'Evaluated', value: metrics.totalApplications },
+              { icon: <Award className="w-4 h-4 text-zinc-300" />, label: 'Registered', value: metrics.verifiedCitizensCount },
             ].map(({ icon, label, value }) => (
-              <div key={label} className="flex items-center gap-2 text-slate-400">
+              <div key={label} className="flex items-center gap-2 text-zinc-400">
                 {icon}
                 <span>{label}:</span>
                 <span className="font-mono text-white font-bold text-sm">{value}</span>
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <div className="flex items-center gap-2 text-zinc-400 font-mono text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
             <span>Midnight Preview • Live</span>
           </div>
         </div>
@@ -79,18 +77,18 @@ export const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
 
-      <footer className="border-t border-slate-800/80 bg-[#02050e] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <footer className="border-t border-zinc-800 bg-black py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
+            <ShieldCheck className="w-4 h-4 text-zinc-300" />
             <span>NightProof — Built on Midnight Network Zero-Knowledge Proofs</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="https://github.com/Boredooms/Nightproof" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-slate-300 transition-colors">
+            <a href="https://github.com/Boredooms/Nightproof" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-white transition-colors">
               <Github className="w-4 h-4" />
               <span>GitHub</span>
             </a>
-            <a href="https://midnight.network" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-slate-300 transition-colors">
+            <a href="https://midnight.network" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-white transition-colors">
               <span>Midnight Docs</span>
               <ExternalLink className="w-3 h-3" />
             </a>
