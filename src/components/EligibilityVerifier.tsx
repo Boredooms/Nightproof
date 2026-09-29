@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   ShieldCheck,
   EyeOff,
-  Eye,
   CheckCircle2,
   XCircle,
   Cpu,
@@ -12,13 +11,9 @@ import {
   DollarSign,
   UserCheck,
   Sparkles,
-  ArrowRight,
   RefreshCw,
-  Terminal,
-  ChevronRight,
-  Info
 } from 'lucide-react';
-import { PRESET_SCHEMES, SchemeRequirement, CitizenCredentialInput, ProofGenerationResult, generateAndSubmitProof } from '../utils/contract';
+import { PRESET_SCHEMES, SchemeRequirement, ProofGenerationResult, generateAndSubmitProof } from '../utils/contract';
 
 interface EligibilityVerifierProps {
   onProofGenerated: (isEligible: boolean) => void;
@@ -230,7 +225,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
                     <label className="text-xs font-medium text-slate-400 flex items-center justify-between mb-1.5">
                       <span>Annual Income (₹)</span>
-                      <EyeOff className="w-3 h-3 text-amber-400" title="Kept Private" />
+                      <span title="Kept Private"><EyeOff className="w-3 h-3 text-amber-400" /></span>
                     </label>
                     <input
                       type="number"
@@ -246,7 +241,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
                     <label className="text-xs font-medium text-slate-400 flex items-center justify-between mb-1.5">
                       <span>Applicant Age</span>
-                      <EyeOff className="w-3 h-3 text-amber-400" title="Kept Private" />
+                      <span title="Kept Private"><EyeOff className="w-3 h-3 text-amber-400" /></span>
                     </label>
                     <input
                       type="number"
@@ -263,7 +258,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
                     <label className="text-xs font-medium text-slate-400 flex items-center justify-between mb-1.5">
                       <span>Academic Score (%)</span>
-                      <EyeOff className="w-3 h-3 text-amber-400" title="Kept Private" />
+                      <span title="Kept Private"><EyeOff className="w-3 h-3 text-amber-400" /></span>
                     </label>
                     <input
                       type="number"
