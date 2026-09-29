@@ -99,17 +99,14 @@ export function useMidnight() {
       const lace = await getLaceApi()
 
       if (!lace) {
-        // Demo mode — Lace extension not installed
-        await new Promise((r) => setTimeout(r, 900))
-        const demoAddr = `mn_preprod_demo_${Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`
+        // Lace extension not installed — stay as 'not-installed' with a clear message
         setWallet({
-          status: 'connected',
-          address: demoAddr,
-          networkId: 'preprod',
-          balance: '5,000 tDUST (demo)',
-          error: null,
+          status: 'not-installed',
+          address: null,
+          networkId: null,
+          balance: null,
+          error: 'Midnight Lace Wallet not found. Install it from midnight.network/lace and set it to Preprod network.',
         })
-        connectedApiRef.current = { _demo: true }
         return
       }
 
@@ -117,18 +114,33 @@ export function useMidnight() {
       const { connectedApi, address, networkId, balance } = await connectLaceWallet()
       connectedApiRef.current = connectedApi
 
+      // Warn if the wallet is not on Preprod, but still allow connection
+      const isOnPreprod = networkId === 'preprod' || networkId === CONTRACT_CONFIG.network
+      const networkWarning = !isOnPreprod
+        ? `Wallet is on "${networkId}" network. Switch your Lace wallet to Preprod for full NightProof functionality.`
+        : null
+
       setWallet({
         status: 'connected',
         address: address || 'mn_preprod_connected',
         networkId,
         balance,
-        error: null,
+        error: networkWarning,   // show network mismatch as a warning (not blocking)
       })
     } catch (err: any) {
-      const message =
-        err?.message?.includes('User declined') || err?.message?.includes('reject')
-          ? 'Authorization declined in Lace wallet. Please try again and approve.'
-          : err?.message || 'Failed to connect Midnight Lace Wallet'
+      const raw = err?.message || ''
+      let message: string
+      if (raw.toLowerCase().includes('invalid network') || raw.toLowerCase().includes('invalid network id')) {
+        message = 'Invalid Network: your Lace wallet network is not compatible. Open Lace → Settings → Network → select "Preprod", then reconnect.'
+      } else if (raw.toLowerCase().includes('network') && raw.toLowerCase().includes('mismatch')) {
+        message = 'Network mismatch: your Lace wallet is not set to Preprod. Open Lace → Settings → Network → switch to Preprod, then try again.'
+      } else if (raw.toLowerCase().includes('user declined') || raw.toLowerCase().includes('reject')) {
+        message = 'Authorization declined in Lace wallet. Please try again and approve.'
+      } else if (raw.toLowerCase().includes('not found') || raw.toLowerCase().includes('not installed')) {
+        message = 'Midnight Lace Wallet not found. Install it from midnight.network/lace.'
+      } else {
+        message = raw || 'Failed to connect Midnight Lace Wallet'
+      }
       setWallet((prev) => ({ ...prev, status: 'error', error: message }))
     }
   }, [])

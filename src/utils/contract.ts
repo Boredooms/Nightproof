@@ -11,8 +11,12 @@
 // ─── Contract Configuration ────────────────────────────────────────────────
 
 export const CONTRACT_CONFIG = {
-  /** Midnight Preprod network identifier */
+  /**
+   * Allowed Midnight networks — the wallet can be on any of these.
+   * 'preprod' is the primary target for NightProof.
+   */
   network: 'preprod' as const,
+  allowedNetworks: ['preprod', 'testnet-02', 'testnet', 'undeployed'] as const,
 
   /**
    * NightProof contract address deployed on Midnight Preprod.
@@ -138,38 +142,117 @@ export async function connectLaceWallet(): Promise<{
 
   if (!lace) {
     throw new Error(
-      'Midnight Lace Wallet extension not found. Please install the Lace wallet extension and set it to Preprod network.'
+      'Midnight Lace Wallet extension not found. Please install the Lace wallet extension.'
     )
   }
 
-  // Enable / connect triggers the Lace authorization popup where user confirms with password
-  const connectedApi = await (lace.connect
-    ? lace.connect(CONTRACT_CONFIG.network)
-    : lace.enable())
+  // ── Known valid Midnight network IDs ──────────────────────────────────────
+  const NETWORK_ID_CANDIDATES = [
+    'preprod',
+    'midnight_preprod',
+    'testnet-02',
+    'midnight_testnet',
+    'undeployed',
+  ]
 
-  let address = ''
-  let networkId = CONTRACT_CONFIG.network
+  let connectedApi: any = null
+  let usedNetworkId: string = 'preprod'
 
-  // Try different address retrieval methods across Lace versions
-  if (connectedApi.getShieldedAddresses) {
-    const addrs = await connectedApi.getShieldedAddresses()
-    address = addrs.shieldedAddress || addrs[0]?.address || ''
-  } else if (connectedApi.getUnshieldedAddress) {
-    const unshielded = await connectedApi.getUnshieldedAddress()
-    address = unshielded.unshieldedAddress || ''
-  } else if (connectedApi.state) {
-    const st = await connectedApi.state()
-    address = st.address || ''
-    networkId = st.networkId || CONTRACT_CONFIG.network
-  } else if (connectedApi.getAddress) {
-    address = await connectedApi.getAddress()
+  // Safely get function references
+  const connectFn = typeof lace.connect === 'function' ? lace.connect.bind(lace) : null
+  const enableFn = typeof lace.enable === 'function' ? lace.enable.bind(lace) : null
+
+  // 1. If lace is already an authorized API object (has .state or address methods)
+  if (lace.state || lace.getUnshieldedAddress || lace.getShieldedAddresses || lace.signData) {
+    connectedApi = lace
+  } else {
+    // 2. Try connectFn or enableFn safely
+    const primaryFn = connectFn || enableFn
+    if (!primaryFn) {
+      throw new Error('Midnight Lace Wallet API does not provide a valid connect or enable method.')
+    }
+
+    let lastErr: any = null
+
+    // Try network ID candidates
+    for (const netId of NETWORK_ID_CANDIDATES) {
+      try {
+        connectedApi = await primaryFn(netId)
+        usedNetworkId = netId
+        break
+      } catch (err: any) {
+        lastErr = err
+        const msg = String(err?.message || err || '')
+        if (msg.toLowerCase().includes('reject') || msg.toLowerCase().includes('declined')) {
+          throw err
+        }
+      }
+    }
+
+    // Try calling without arguments if candidate network IDs failed
+    if (!connectedApi) {
+      try {
+        connectedApi = await primaryFn()
+      } catch (err: any) {
+        if (!lastErr) lastErr = err
+      }
+    }
+
+    // Try secondary function if primary failed
+    if (!connectedApi && connectFn && enableFn) {
+      const secondaryFn = enableFn
+      for (const netId of NETWORK_ID_CANDIDATES) {
+        try {
+          connectedApi = await secondaryFn(netId)
+          usedNetworkId = netId
+          break
+        } catch { continue }
+      }
+      if (!connectedApi) {
+        try { connectedApi = await secondaryFn() } catch {}
+      }
+    }
+
+    if (!connectedApi) {
+      const errMsg = lastErr?.message || 'Could not connect to Midnight Lace Wallet.'
+      throw new Error(errMsg)
+    }
   }
 
+  let address = ''
+  let networkId = usedNetworkId
+
+  // ── Read wallet state after connection ────────────────────────────────────
+  // The state() method returns address, network, and other wallet info
+  try {
+    if (connectedApi.state) {
+      const st = await connectedApi.state()
+      address = st?.address || st?.unshieldedAddress || st?.coinPublicKey || ''
+      networkId = st?.networkId || st?.network || usedNetworkId
+    }
+  } catch { /* ignore */ }
+
+  // Fallback address retrieval methods for older API shapes
+  if (!address) {
+    try {
+      if (connectedApi.getUnshieldedAddress) {
+        const u = await connectedApi.getUnshieldedAddress()
+        address = u?.unshieldedAddress || (typeof u === 'string' ? u : '') || ''
+      } else if (connectedApi.getShieldedAddresses) {
+        const addrs = await connectedApi.getShieldedAddresses()
+        address = addrs?.shieldedAddress || addrs?.[0]?.address || ''
+      } else if (connectedApi.getAddress) {
+        address = await connectedApi.getAddress()
+      }
+    } catch { /* ignore */ }
+  }
+
+  // ── Read balance ─────────────────────────────────────────────────────────
   let balance = 'tDUST Active'
   if (connectedApi.getDustBalance) {
     try {
       const dust = await connectedApi.getDustBalance()
-      const raw = dust.balance ?? dust.total ?? 0
+      const raw = dust?.balance ?? dust?.total ?? 0
       balance = `${(Number(raw) / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 2 })} tDUST`
     } catch {
       balance = 'tDUST Active'
