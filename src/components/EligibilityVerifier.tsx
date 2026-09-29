@@ -38,7 +38,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
     'Requesting Midnight Lace Wallet signature',
     'Evaluating ZK circuit inequalities locally',
     'Generating cryptographic proof via Proof Server',
-    'Submitting disclosed outcome to Midnight Preprod',
+    'Submitting disclosed outcome to Midnight Preview',
   ];
 
   const getCurrentStepIndex = () => {
@@ -47,7 +47,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
     if (step.includes('Lace') || step.includes('sign') || step.includes('popup')) return 1;
     if (step.includes('circuit') || step.includes('inequalit')) return 2;
     if (step.includes('proof') || step.includes('cryptograph')) return 3;
-    if (step.includes('Preprod') || step.includes('Submit') || step.includes('InBlock')) return 4;
+    if (step.includes('Preview') || step.includes('Submit') || step.includes('InBlock')) return 4;
     return -1;
   };
 
@@ -89,7 +89,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
             <div>
               <h4 className="text-base font-bold text-white">
                 Midnight Lace Wallet Required
-                <span className="ml-2 text-xs font-normal px-2 py-0.5 rounded bg-blue-900 text-blue-300 font-mono">Preprod</span>
+                <span className="ml-2 text-xs font-normal px-2 py-0.5 rounded bg-blue-900 text-blue-300 font-mono">Preview</span>
               </h4>
               <p className="text-xs text-slate-300 mt-1">
                 Click <strong>Connect Midnight Lace Wallet</strong> above to authorize — a popup will open asking for your wallet password.
@@ -128,7 +128,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
         </div>
         <div className="flex items-center gap-2 px-3 py-1 bg-slate-950/60 rounded-lg border border-slate-800 text-xs text-slate-400 font-mono">
           <Activity className="w-3 h-3 text-cyan-400 animate-pulse" />
-          <span>NightProof Compact • Midnight Preprod</span>
+          <span>NightProof Compact • Midnight Preview</span>
         </div>
       </div>
 
@@ -365,7 +365,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
                       {proof.result.isEligible ? 'Eligibility APPROVED' : 'Criteria Not Satisfied'}
                     </h4>
                     <p className="text-xs text-slate-300 font-mono">
-                      <span className="text-cyan-400">verify_eligibility()</span> • Midnight Preprod
+                      <span className="text-cyan-400">verify_eligibility()</span> • Midnight Preview
                     </p>
                   </div>
                 </div>
@@ -393,16 +393,37 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
                   </div>
                 </div>
 
-                {/* Explorer Link */}
-                <a
-                  href={proof.result.explorerUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 flex items-center gap-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>View on Midnight Preprod Explorer</span>
-                </a>
+                {/* Explorer Link & Off-chain notice */}
+                {proof.result.contractAddress.includes('DEPLOY CONTRACT FIRST') ? (
+                  <div className="mt-4 p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/50 text-[11px] text-indigo-200 space-y-1.5">
+                    <div className="flex items-center gap-1.5 font-semibold text-indigo-300">
+                      <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Off-Chain ZK Proof Verified (Lace Signed)</span>
+                    </div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                      This ZK proof was cryptographically signed via your Lace wallet. To broadcast & index live on-chain TX blocks on Night Scan explorer, deploy contract bytecode via <code className="bg-slate-900 px-1 py-0.5 rounded text-cyan-300">npm run deploy</code>.
+                    </p>
+                    <a
+                      href={proof.result.explorerUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-medium pt-1 transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>Open Midnight Preview Block Explorer ↗</span>
+                    </a>
+                  </div>
+                ) : (
+                  <a
+                    href={proof.result.explorerUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 flex items-center gap-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>View Transaction on Night Scan Explorer</span>
+                  </a>
+                )}
 
                 {/* Privacy Breakdown */}
                 <div className="mt-4 p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs space-y-2">
@@ -528,7 +549,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({ midnig
 
             {proof.result && proof.status === 'verified' && activeTab === 'vault' && (
               <div className="p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl text-xs text-emerald-300 font-mono space-y-1">
-                <div>✓ Registered on Midnight Preprod!</div>
+                <div>✓ Registered on Midnight Preview!</div>
                 <div className="truncate">TX: {proof.result.txHash}</div>
                 <a
                   href={proof.result.explorerUrl}

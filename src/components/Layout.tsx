@@ -70,7 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({
           </div>
           <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Midnight Preprod • Live</span>
+            <span>Midnight Preview • Live</span>
           </div>
         </div>
       </div>

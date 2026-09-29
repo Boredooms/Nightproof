@@ -5,7 +5,7 @@
  * - Midnight Lace wallet DApp connector API detection & authorization
  * - ZK witness construction for the nightproof.compact circuits
  * - Transaction signing via Lace wallet popup (password confirmation)
- * - Explorer URL generation for Midnight Preprod network
+ * - Explorer URL generation for Midnight Preview network
  */
 
 // ─── Contract Configuration ────────────────────────────────────────────────
@@ -311,7 +311,7 @@ export function evaluateEligibility(
  *   2. Construct private witnesses locally (private data stays in browser sandbox)
  *   3. Evaluate ZK eligibility constraints locally
  *   4. Request Lace wallet signature (triggers password popup)
- *   5. Submit proof metadata to Midnight Preprod ledger
+ *   5. Submit proof metadata to Midnight Preview ledger
  *   6. Return full audit result with explorer URL
  */
 export async function generateEligibilityProof(
@@ -372,13 +372,16 @@ export async function generateEligibilityProof(
   await delay(300)
 
   // Step 5: Submit & confirm
-  onStep('Submitting to Midnight Preprod — awaiting InBlock confirmation...')
-  logs.push(`📡 TX submitted to Midnight Preprod Indexer: ${CONTRACT_CONFIG.indexerUrl}`)
+  onStep('Submitting to Midnight Preview — awaiting InBlock confirmation...')
+  logs.push(`📡 TX submitted to Midnight Preview Indexer: ${CONTRACT_CONFIG.indexerUrl}`)
   logs.push(`✅ Contract: ${CONTRACT_CONFIG.address}`)
   await delay(400)
 
   const endTime = performance.now()
-  const explorerTxUrl = `${CONTRACT_CONFIG.explorerUrl}/tx/${txHash}`
+  const isDeployed = CONTRACT_CONFIG.address && !CONTRACT_CONFIG.address.includes('DEPLOY CONTRACT FIRST')
+  const explorerTxUrl = isDeployed
+    ? `${CONTRACT_CONFIG.explorerUrl}/tx/${txHash}`
+    : `${CONTRACT_CONFIG.explorerUrl}`
 
   return {
     success: true,

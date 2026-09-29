@@ -105,7 +105,7 @@ export function useMidnight() {
           address: null,
           networkId: null,
           balance: null,
-          error: 'Midnight Lace Wallet not found. Install it from midnight.network/lace and set it to Preprod network.',
+          error: 'Midnight Lace Wallet not found. Install it from midnight.network/lace and set it to Preview network.',
         })
         return
       }
@@ -196,12 +196,12 @@ export function useMidnight() {
             txHash,
             proofHash: txHash,
             contractAddress: CONTRACT_CONFIG.address,
-            explorerUrl: `${CONTRACT_CONFIG.explorerUrl}/tx/${txHash}`,
+            explorerUrl: CONTRACT_CONFIG.address.includes('DEPLOY CONTRACT FIRST') ? CONTRACT_CONFIG.explorerUrl : `${CONTRACT_CONFIG.explorerUrl}/tx/${txHash}`,
             scheme: {} as any,
             executionTimeMs: 1200,
             timestamp: new Date().toISOString(),
             walletSignature: txHash.slice(0, 64),
-            logs: ['Credential commitment registered on Midnight Preprod via register_citizen_credential() circuit.'],
+            logs: ['Credential commitment registered on Midnight Preview via register_citizen_credential() circuit.'],
           },
         })
 
