@@ -1,0 +1,44 @@
+{
+  "name": "nightproof",
+  "version": "1.0.0",
+  "description": "Privacy-First Eligibility Verification Platform built on Midnight Network",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "jest --config jest.config.cjs",
+    "test:ci": "jest --config jest.config.cjs --forceExit",
+    "compile": "wsl /home/archishman_sarkar/.local/bin/compact compile contracts/nightproof.compact managed",
+    "deploy": "tsx scripts/deploy.ts"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "^0.16.0",
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "@midnight-ntwrk/midnight-js-contracts": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
+    "@midnight-ntwrk/midnight-js-utils": "^4.1.1",
+    "@midnight-ntwrk/wallet-sdk": "^1.1.0",
+    "lucide-react": "^0.439.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.10",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.23.13",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.2"
+  }
+}

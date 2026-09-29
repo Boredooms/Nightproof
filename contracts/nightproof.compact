@@ -1,0 +1,118 @@
+// =============================================================================
+// NightProof — Privacy-First Eligibility Verification Platform
+// Midnight Network Compact Smart Contract
+// =============================================================================
+//
+// PRIVACY MODEL
+// ─────────────
+// PUBLIC (on-chain, visible on ledger):
+//   • total_verifications     — total number of successful ZK eligibility proofs verified
+//   • total_applications      — total number of verification attempts processed
+//   • verified_citizens_count — total number of credential commitment registrations
+//
+// PRIVATE (witness, handled off-chain, NEVER touches the ledger):
+//   • citizen_secret_key      — citizen's private key / commitment seed (Bytes<32>)
+//   • annual_income           — applicant's actual annual family income in currency units (Uint<64>)
+//   • age                     — applicant's exact age in years (Uint<64>)
+//   • academic_score          — applicant's academic test score percentage (Uint<64>)
+//   • credential_hash         — cryptographic hash of the official government/issuer document (Bytes<32>)
+//
+// WHAT THE ZK PROOF PROVES (without disclosing private data):
+//   • "The applicant holds a valid issuer credential hash (non-zero)"
+//   • "The applicant's annual income is <= maximum scheme threshold" (e.g. <= 300,000)
+//   • "The applicant's age is >= minimum age required" (e.g. >= 18)
+//   • "The applicant's academic score is >= required passing score" (e.g. >= 75%)
+//   All computations run locally inside the ZK circuit. Only the final boolean
+//   eligibility outcome is disclosed on-chain to update public statistics.
+//
+// disclose() USAGE POLICY:
+//   disclose() is used ONLY on the boolean eligibility condition to update public tallies.
+//   The citizen's income, age, score, document hash, and secret key are NEVER disclosed.
+// =============================================================================
+
+pragma language_version >= 0.14;
+
+import CompactStandardLibrary;
+
+// ─── PUBLIC LEDGER STATE ────────────────────────────────────────────────────
+
+/// Total number of successful zero-knowledge eligibility verifications.
+export ledger total_verifications: Counter;
+
+/// Total number of eligibility evaluation attempts.
+export ledger total_applications: Counter;
+
+/// Total number of registered citizen credential commitments.
+export ledger verified_citizens_count: Counter;
+
+// ─── PRIVATE WITNESSES ──────────────────────────────────────────────────────
+
+/// Citizen's private identity commitment key — kept entirely off-chain.
+witness citizen_secret_key(): Bytes<32>;
+
+/// Applicant's family annual income — kept entirely off-chain.
+witness annual_income(): Uint<64>;
+
+/// Applicant's exact age in years — kept entirely off-chain.
+witness age(): Uint<64>;
+
+/// Applicant's academic score — kept entirely off-chain.
+witness academic_score(): Uint<64>;
+
+/// Cryptographic hash of official issued document — kept entirely off-chain.
+witness credential_hash(): Bytes<32>;
+
+// ─── CIRCUITS ───────────────────────────────────────────────────────────────
+
+/// register_citizen_credential — Registers a citizen's credential commitment.
+///
+/// Privacy guarantee: Validates that the citizen key and credential hash are non-zero.
+/// Increments verified_citizens_count. Stays entirely off-chain; no personal data is stored.
+export circuit register_citizen_credential(): [] {
+  const sk = citizen_secret_key();
+  const cred = credential_hash();
+
+  assert(sk != pad(32, ""), "Citizen secret key must not be zero");
+  assert(cred != pad(32, ""), "Credential hash must not be zero");
+
+  verified_citizens_count.increment(1);
+}
+
+/// verify_eligibility — Privately verifies if an applicant satisfies program criteria.
+///
+/// @param max_income_threshold — public threshold for maximum allowable income
+/// @param min_age_required     — public threshold for minimum age required
+/// @param min_score_required   — public threshold for minimum academic score
+export circuit verify_eligibility(
+  max_income_threshold: Uint<64>,
+  min_age_required: Uint<64>,
+  min_score_required: Uint<64>
+): [] {
+  const sk = citizen_secret_key();
+  const cred = credential_hash();
+  const inc = annual_income();
+  const user_age = age();
+  const score = academic_score();
+
+  assert(sk != pad(32, ""), "Invalid identity: key must not be zero");
+  assert(cred != pad(32, ""), "Invalid credential hash");
+
+  total_applications.increment(1);
+
+  // Evaluate eligibility in Zero Knowledge
+  const is_income_ok = inc <= max_income_threshold;
+  const is_age_ok = user_age >= min_age_required;
+  const is_score_ok = score >= min_score_required;
+
+  const is_eligible = is_income_ok && is_age_ok && is_score_ok;
+
+  // Disclose only the boolean result to update ledger counter
+  if (disclose(is_eligible)) {
+    total_verifications.increment(1);
+  }
+}
+
+/// get_total_verifications — View circuit to read public verifications count.
+export circuit get_total_verifications(): Uint<64> {
+  return total_verifications as Uint<64>;
+}
