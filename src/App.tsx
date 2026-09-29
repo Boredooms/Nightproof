@@ -5,28 +5,20 @@ import { useMidnight } from './hooks/useMidnight';
 import { Sparkles } from 'lucide-react';
 
 export function App() {
-  const {
-    wallet,
-    connectWallet,
-    disconnectWallet,
-    signCredentialPayload,
-    metrics,
-    incrementMetrics,
-    incrementCitizensCount,
-  } = useMidnight();
+  const midnight = useMidnight();
 
   return (
     <Layout
-      wallet={wallet}
-      metrics={metrics}
-      onConnectWallet={connectWallet}
-      onDisconnectWallet={disconnectWallet}
+      wallet={midnight.wallet}
+      metrics={midnight.metrics}
+      onConnectWallet={midnight.connectWallet}
+      onDisconnectWallet={midnight.disconnectWallet}
     >
-      {/* Hero Header */}
+      {/* Hero */}
       <div className="text-center max-w-3xl mx-auto mb-10 space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-950/80 border border-blue-800/60 text-xs font-semibold text-blue-300 shadow-inner">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-950/80 border border-blue-800/60 text-xs font-semibold text-blue-300">
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Zero-Knowledge Public Services Verification</span>
+          <span>Zero-Knowledge Public Services Verification on Midnight Network</span>
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -37,19 +29,12 @@ export function App() {
         </h2>
 
         <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-          NightProof replaces repetitive document uploads with Zero-Knowledge Proofs on Midnight Network.
-          Prove income, age, and academic qualifications for scholarships and welfare schemes without revealing sensitive document copies.
+          Authorize with your Midnight Lace Wallet, then prove income, age, and academic qualifications
+          for scholarships and welfare programs via real ZK proofs — without disclosing any sensitive documents.
         </p>
       </div>
 
-      {/* Main Core Component */}
-      <EligibilityVerifier
-        isConnected={wallet.isConnected}
-        onConnectWallet={connectWallet}
-        signPayload={signCredentialPayload}
-        onProofGenerated={(isEligible) => incrementMetrics(isEligible)}
-        onCredentialRegistered={incrementCitizensCount}
-      />
+      <EligibilityVerifier midnight={midnight} />
     </Layout>
   );
 }
