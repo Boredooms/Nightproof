@@ -26,6 +26,30 @@ The NightProof smart contract is officially deployed and verified on the live Mi
 
 ---
 
+## 📸 Application Screenshots
+
+### 1. Landing Page
+<div align="center">
+  <img src="./docs/images/1_landing_page.png" alt="NightProof Landing Page" width="800"/>
+</div>
+
+### 2. Citizen Portal & Wallet Authorization
+<div align="center">
+  <img src="./docs/images/2_citizen_portal.png" alt="Citizen Portal & Wallet Authorization" width="800"/>
+</div>
+
+### 3. ZK Proof Generation (Eligibility Approved)
+<div align="center">
+  <img src="./docs/images/3_proof_approved.png" alt="Eligibility Approved Proof" width="800"/>
+</div>
+
+### 4. Institutional Verifier Portal
+<div align="center">
+  <img src="./docs/images/4_institutional_verifier.png" alt="Institutional Verifier Portal" width="800"/>
+</div>
+
+---
+
 ## 🚀 What This Product Does
 
 Today, applicants applying for government welfare schemes, university scholarships, agricultural subsidies, and healthcare assistance are required to repeatedly upload copies of Aadhaar cards, income certificates, tax records, and academic transcripts across multiple institutional portals. This exposes citizens to massive privacy risks, document forgery, identity theft, and data leaks.
