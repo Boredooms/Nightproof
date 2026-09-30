@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../",
+  "sources": ["contracts/nightproof.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAgCA;;;;;;;;;;;;;;;;;;;;;;;;;MAsCA,AAAA,2BAQC;;;;;;;;;;;;;;;;;;;;;;;;OAAA;MAOD,AAAA,kBA2BC;;;;;cA1BC,sBAA8B;cAC9B,kBAA0B;cAC1B,oBAA4B;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;yCAF5B,sBAA8B,+BAC9B,kBAA0B,+BAC1B,oBAA4B;;;;;;;;;0DAF5B,sBAA8B;0DAC9B,kBAA0B;0DAC1B,oBAA4B;;;;OAwB7B;MAGD,AAAA,uBAEC;;;;;;;;;;;;;;;;;;;;;;;;OAAA;;;;;;;;;;;;GACA;EAtFD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAOA;;;;;;;;;yEAA2C;IAG3C;;;;;;;;;yEAA0C;IAG1C;;;;;;;;;yEAA+C;;;;;;;GAyE9C;EApED,AAAA,qBAAwC;;0DAAxC,kBAAwC;;;;;;;;;;;;;;GAAA;EAGxC,AAAA,gBAAkC;;0DAAlC,aAAkC;;;;;;;;;;;;;;GAAA;EAGlC,AAAA,MAAwB;;0DAAxB,GAAwB;;;;;;;;;;;;;;GAAA;EAGxB,AAAA,iBAAmC;;0DAAnC,cAAmC;;;;;;;;;;;;;;GAAA;EAGnC,AAAA,kBAAqC;;0DAArC,eAAqC;;;;;;;;;;;;;;GAAA;EAQrC,AAAA,oCAQC;UAPO,IAAyB;UACzB,MAAwB;2CAEvB,IAAE;;;2CACF,MAAI;;;UAEX,KAAuB;IAAvB;;;;;;;;;;6FAAA,KAAuB;;;;wEAAA;;GACxB;EAOD,AAAA,2BA2BC;;8BA1BC,sBAA8B;8BAC9B,kBAA0B;8BAC1B,oBAA4B;;UAEtB,IAAyB;UACzB,MAAwB;UACxB,KAAqB;UACrB,UAAgB;UAChB,OAAwB;2CAEvB,IAAE;;;2CACF,MAAI;;;UAEX,KAAkB;IAAlB;;;;;;;;;;6FAAA,KAAkB;;;;wEAAA;UAGZ,cAA0C,GAA3B,KAAG,IAAI,sBAAoB;UAC1C,WAAwC,GAA5B,UAAQ,IAAI,kBAAgB;UACxC,aAAyC,GAA3B,OAAK,IAAI,oBAAkB;UAEzC,aAAsD,GAAxC,cAAY,IAAI,WAAS,IAAI,aAAW;QAG/C,aAAW;YACtB,KAAmB;MAAnB;;;;;;;;;;+FAAA,KAAmB;;;;0EAAA;;;GAEtB;EAGD,AAAA,gCAEC;mCADQ;;;;;;;;;;;wGAAmB;GAC3B;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IA9ED;qCAAA;;;;;;;;;;;0GAA2C;KAAA;IAG3C;qCAAA;;;;;;;;;;;0GAA0C;KAAA;IAG1C;qCAAA;;;;;;;;;;;0GAA+C;KAAA;;;;;;;;;;;;;;;;;;;;;;"
+}

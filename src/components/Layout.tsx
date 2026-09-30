@@ -25,7 +25,15 @@ export const Layout: React.FC<LayoutProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-zinc-900 border border-zinc-700 p-0.5 shadow-xl flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-white" />
+              {/* NightProof ZK Shield Mark */}
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <g transform="rotate(-30 12 12)">
+                  <circle cx="7.3" cy="3.2" r="1.45" />
+                  <rect x="5.5" y="4.7" width="3.6" height="14.6" rx="1.8" />
+                  <rect x="14.9" y="4.7" width="3.6" height="14.6" rx="1.8" />
+                  <circle cx="16.7" cy="20.8" r="1.45" />
+                </g>
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -67,7 +75,7 @@ export const Layout: React.FC<LayoutProps> = ({
             ))}
           </div>
           <div className="flex items-center gap-2 text-zinc-400 font-mono text-[11px]">
-            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            <span className="w-2 h-2 rounded-full bg-white animate-ping" />
             <span>Midnight Preview • Live</span>
           </div>
         </div>

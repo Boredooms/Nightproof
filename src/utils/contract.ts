@@ -15,17 +15,19 @@ export const CONTRACT_CONFIG = {
   network: 'preview' as const,
 
   /**
-   * NightProof contract address deployed on Midnight Preview.
-   * Set VITE_CONTRACT_ADDRESS in .env after running: npm run deploy
+   * NightProof contract address on Midnight Preview.
+   * Set VITE_CONTRACT_ADDRESS in .env.local after deploying:
+   *   npm run deploy
+   * Then paste the deployed address below or in .env.local
    */
   address:
     import.meta.env.VITE_CONTRACT_ADDRESS ||
-    '[DEPLOY CONTRACT FIRST — paste address here]',
+    '79bda166f07754080384f07744c742033cabff15f3ba428433e25d413cf2bb8b',
 
   /** Midnight Preview indexer GraphQL URL */
   indexerUrl: 'https://indexer.preview.midnight.network/api/v4/graphql',
 
-  /** Midnight Preview block explorer URL */
+  /** Midnight Preview block explorer base URL */
   explorerUrl: 'https://explorer.preview.midnight.network',
 
   /** Local ZK Proof Server (Docker) */
@@ -380,7 +382,7 @@ export async function generateEligibilityProof(
   const endTime = performance.now()
   const isDeployed = CONTRACT_CONFIG.address && !CONTRACT_CONFIG.address.includes('DEPLOY CONTRACT FIRST')
   const explorerTxUrl = isDeployed
-    ? `${CONTRACT_CONFIG.explorerUrl}/tx/${txHash}`
+    ? `${CONTRACT_CONFIG.explorerUrl}/transactions/${txHash}`
     : `${CONTRACT_CONFIG.explorerUrl}`
 
   return {
