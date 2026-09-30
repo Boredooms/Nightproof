@@ -461,16 +461,7 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   </table>
                 </div>
 
-                {/* Open Explorer CTA */}
-                <a
-                  href={proof.result.explorerUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 flex items-center gap-2 text-xs text-white hover:underline font-bold transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Open Midnight Preview Block Explorer ↗</span>
-                </a>
+
 
                 {/* Privacy Breakdown */}
                 <div className="mt-4 p-3.5 rounded-2xl bg-black border border-zinc-800 text-xs space-y-2">
