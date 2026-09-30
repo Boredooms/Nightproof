@@ -366,6 +366,7 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(
   text-align: center;
   max-width: var(--copy-max);
   width: 100%;
+  transform: translateY(35px);
 }
 
 /* Badge */

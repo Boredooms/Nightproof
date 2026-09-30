@@ -6,11 +6,11 @@
 [![CI Pipeline](https://github.com/Boredooms/Nightproof/actions/workflows/ci.yml/badge.svg)](https://github.com/Boredooms/Nightproof/actions)
 [![Midnight Network](https://img.shields.io/badge/Network-Midnight%20Preview-purple)](https://midnight.network)
 [![Follow on X](https://img.shields.io/badge/X-%40nightproof67-black?logo=x&logoColor=white)](https://x.com/nightproof67)
-[![Demo Video](https://img.shields.io/badge/Demo_Video-Coming_Soon-blue)](#)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-Watch_Now-blue)](https://drive.google.com/file/d/1IbJ7SLwFLA4GFxQO2w1-NniqYq-O-mp0/view?usp=sharing)
 
 > **NightProof** is built on the Midnight Network using Zero-Knowledge Proofs to verify citizens for scholarships, subsidies, and welfare *without* exposing sensitive personal documents.
 
-[**Watch the Demo Video**](xyz(update in future)) • [**Follow us on X**](https://x.com/nightproof67)
+[**Watch the Demo Video**](https://drive.google.com/file/d/1IbJ7SLwFLA4GFxQO2w1-NniqYq-O-mp0/view?usp=sharing) • [**Read the X Post**](https://x.com/nightproof67/status/2105306132944150710) • [**Follow us on X**](https://x.com/nightproof67)
 
 </div>
 
