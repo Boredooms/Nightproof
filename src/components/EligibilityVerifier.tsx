@@ -221,11 +221,11 @@ export const EligibilityVerifier: React.FC<EligibilityVerifierProps> = ({
                   2. Private Credential Inputs (WITNESS — never leave browser)
                 </label>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className={`grid ${selectedScheme.minScoreRequired > 0n ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
                   {[
                     { label: 'Annual Income (₹)', value: annualIncome, setter: setAnnualIncome, min: 0 },
                     { label: 'Age (years)', value: age, setter: setAge, min: 1, max: 120 },
-                    { label: 'Academic Score (%)', value: academicScore, setter: setAcademicScore, min: 0, max: 100 },
+                    ...(selectedScheme.minScoreRequired > 0n ? [{ label: 'Academic Score (%)', value: academicScore, setter: setAcademicScore, min: 0, max: 100 }] : [])
                   ].map(({ label, value, setter, min, max }) => (
                     <div key={label} className="bg-black p-3.5 rounded-2xl border border-zinc-800">
                       <label className="text-xs font-medium text-zinc-400 flex items-center justify-between mb-1.5">
