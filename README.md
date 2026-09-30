@@ -48,6 +48,11 @@ The NightProof smart contract is officially deployed and verified on the live Mi
   <img src="./docs/images/4_institutional_verifier.png" alt="Institutional Verifier Portal" width="800"/>
 </div>
 
+### 5. Midnight Block Explorer (Verified Contract)
+<div align="center">
+  <img src="./docs/images/5_block_explorer.png" alt="Midnight Block Explorer" width="800"/>
+</div>
+
 ---
 
 ## 🚀 What This Product Does
